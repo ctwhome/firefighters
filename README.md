@@ -1,15 +1,14 @@
 <h2>Decision Suport Systems for Firefighters </h2>
 
-@author: Jesús García González
-@web: www.ctwhome.com
-@language: FLEX - Action Script 3
+
+<p>@author: Jesús García González</p>
+<p>@web: www.ctwhome.com
+<p>@language: FLEX - Action Script 3</p>
 
 
-Direct link to personal code by Jesús --> https://github.com/ctwhome/firefighters-flex/tree/master/src/com/bomberos
+<strong>Direct link to personal code by Jesús --> https://github.com/ctwhome/firefighters-flex/tree/master/src/com/bomberos </strong>
 
-/* ***************************************
-/*      DESCRIPTION
-/* ***************************************
+<h3>DESCRIPTION</h3>
 
 This project describes a decision support system for emergency crews. It aims to design an application framed within the context of aid to decision-making for emergency services as part of a network visible ad-hoc communications designed in collaboration with Universidad Rey Juan Carlos, Carlos III University of Madrid and the firehouse of Fuenlabrada. The design is aimed for use in fire brigades, however, could be extrapolated to other intervention services such as police, emergency hospital services, Summa 112, etc.
 
