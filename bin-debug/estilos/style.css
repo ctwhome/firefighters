@@ -1,0 +1,20 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+
+
+.boton1 {
+	upSkin: color="red"/* Embed("img/ico1.png");*/ ;
+	overSkin: color="red"height="400"/* Embed("img/ico2.png");*/;
+	downSkin: color="red"height="300"/* Embed("img/ico3.png");*/;
+	disableSkin: color="red"height="100"/* Embed("img/ico4.png");*/;
+	skinClass: ClassReference("spark.skins.mobile.ButtonSkin");
+}
+
+.boton2 {
+	upSkin: color="red"/* Embed("img/ico1.png");*/ ;
+}
+
+s|CalloutContent {
+	contentBackgroundColor="red";
+	color="red";
+}

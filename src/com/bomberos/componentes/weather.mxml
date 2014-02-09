@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////
+//																
+//	Tiempo - COMPONENTE		 													
+//	
+//  Utiliza el API de Yahoo para obtener los datos.																
+//	- -															
+//	Jesús García González											
+//	Universidad Carlos III de Madrid								
+//	- -															
+//////////////////////////////////////////////////////////////// -->
+
+
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:contenedores="todo.contenedores.*" 
+		 xmlns:clases="todo.clases.*"
+		 creationComplete="init()"
+		 >
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	
+	<fx:Script>
+		<![CDATA[
+			
+			// API Yahoo Weather
+			import com.yahoo.webapis.weather.WeatherService;
+			import com.yahoo.webapis.weather.events.*;
+			
+			// Variables que cambiarán cuando se actualicen los datos del tiempo			
+			[Bindable] 	public var the_weather:WeatherService = new WeatherService();
+			[Bindable]  public var codigo:String="";										// Códgio del clipa para iconos y precicciones.
+			[Bindable] 	public var temp:String ="";											// Temperatura en C°
+			[Bindable] 	public var imagen:String ="";										// imagen del pronóstico
+			[Bindable]	public var barra_inf:String ="";									// Humedad + velocidad del viento
+			[Bindable]	public var dir:String ="";											// Dirección del viento en grados respecto al norte
+			[Bindable]	public var v_viento:String ="";										// Velocidad Del Viento
+			[Bindable]	public var desc:String ="";											// Descripción en palabras, Nublado, soleado ...
+			[Bindable]	public var detalles:String ="";										// Presión, visibilidad, Puesta y Salida del Sol
+			[Bindable]	public var grados_dir:String ="";									// Grados de viento respecto al norte
+			
+			private function mostrar_descripcion(i:String):String{
+				var desc:String="";
+				var m_desc:Array = new Array(
+					"Tornado",	"Tormenta tropical","Huracán","Tormentas severas","Tormentas eléctricas","Mixtos de lluvia y nieve",			"Mixtos de lluvia y aguanieve",
+					"Mixto de nieve y Aguanieve","Congelación llovizna","Llovizna","Lluvia helada",	"Chubascos","Chubascos","Nieve",
+					"Nieve,	Chubascos","Nieve, Ventoso","Nieve","Granizo","Aguanieve","Tormenta de tierra",	"Niebla","Haze","Humo",
+					"Blustery",	"Viento","Frío","Nublado","Chubascos por la noche","Día parcialmente nublado","Noche Parcialmente nublado",
+					"Día Parcialmente nublado",	"Noche Despejada","Soleado","Noche despejada","Día despejado","Mixtos de Lluvia y Granizo",
+					"Caluroso",	"Tormentas aisladas","Tormentas aisladas","Tormentas aisladas","Chaparrones","Nieve","Tormenta de nieve dispersos",
+					"Nieve","Parcialmente nublado","Tormentas",	"Granizo","Tormentas aisladas");
+				
+				if (i=="3200"){	desc="Sin Datos"}
+				else {desc = m_desc[i]}
+				
+				return desc;
+			}
+						
+			private function init():void{
+				the_weather.getWeather("SPXX0048", "metric");       // Códio sacado de http://espanol.weather.com/
+				the_weather.addEventListener(WeatherResultEvent.WEATHER_LOADED, show_weather);
+			}
+			
+			public function show_weather(event:WeatherResultEvent):void {
+				
+				//dispara el evento que carga los grados del tiempo
+				
+				cargando.visible=false;
+				contenido.visible=true;
+				var sunrise:Date= event.data.current.astronomy.sunrise as Date;
+				var sunset:Date= event.data.current.astronomy.sunset as Date;
+				
+				// Adjudicación de variables
+				codigo= event.data.current.code;
+				temp = event.data.current.temperature+"°";
+				imagen = event.data.current.imageURL;
+				dir = event.data.current.wind.direction;
+				v_viento = event.data.current.wind.speed; 
+				barra_inf = "H: "+event.data.current.atmosphere.humidity+"%  V: "+event.data.current.wind.speed+" km/h";
+				desc = mostrar_descripcion(codigo);
+				detalles = "Presión: "+event.data.current.atmosphere.pressure+" "+event.data.units.pressure+"\n";
+				detalles +="Visibilidad: "+event.data.current.atmosphere.visibility+" "+event.data.units.distance+"\n";
+				detalles +="Salida Sol: "+sunrise.hours +":"+ sunrise.minutes+"\n";
+				detalles +="Puesta Sol "+sunset.hours +":"+ sunset.minutes+"\n";
+				grados_dir = "Dirección del Viento: "+dir+"°";
+				
+				trace(event.data.current.description);
+				trace(codigo);
+				trace(mostrar_descripcion(codigo));
+				// Si no hay viento no se muestra las flechas del viento
+				if (v_viento == "0"){
+					dir_p.visible=false;
+					dir_g.visible=false;
+					no_wind_g.visible=true;
+					no_wind_p.visible=true;
+				}
+				else{
+					// Giro de las imágenes del viento
+					rotateImage(dir_p, Number(dir));
+					rotateImage(dir_g, Number(dir));
+				}
+			}
+			
+			// Rotación de la la dirección del viento.
+			// Se necesita esta función porque Flex por defecto gira las imágenes según el vértice sup. izq.
+			// Esta función hace que el giro sea respecto al centro de la imagen.
+			private function rotateImage(image:Image, degrees:Number):void {
+				// Calculate rotation and offsets
+				var radians:Number = degrees * (Math.PI / 180.0);
+				var offsetWidth:Number = image.width/2.0;
+				var offsetHeight:Number =  image.height/2.0;
+				
+				// Perform rotation
+				var matrix:Matrix = new Matrix();
+				matrix.translate(-offsetWidth, -offsetHeight);
+				matrix.rotate(radians);
+				matrix.translate(+offsetWidth, +offsetHeight);
+				matrix.concat(image.transform.matrix);
+				image.transform.matrix = matrix;
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<s:Group id="abierto" visible="false" 
+			 click="{abierto.visible = !abierto.visible}; t_bar_c.visible= !t_bar_c.visible;  ">
+		<s:Image   id="t_bar_o" x="5" y="5" width="190" height="268" source="assets/tiempo/t_bar_open.png"/>
+		<s:Label x="13" y="72" fontSize="18" text="{desc}"/>
+		<s:Label x="24" y="100" fontSize="13" text="{detalles}"/>		
+		<s:Image x="25" y="175" source="assets/tiempo/t_brujula.png"/>
+		<s:Image id="dir_g" x="104" y="175" source="assets/tiempo/t_dir.png"/>
+		<s:Image id="no_wind_g" x="104" y="175" source="assets/tiempo/t_no_wind_g.png" visible="false"/>
+		<s:Label x="24" y="255" fontSize="13" text="{grados_dir}"/>
+	</s:Group>
+	
+	
+	<s:Group  id="cerrado" click="{abierto.visible = !abierto.visible;  t_bar_c.visible= !t_bar_c.visible; }">
+		
+		<s:Image   id="t_bar_c" x="5" y="5" width="190" height="62" source="assets/tiempo/t_bar_closed.png"/>
+		<s:Label id="cargando" x="15" y="28" color="#D87F00" fontSize="18" text="Cargando Tiempo ..."/>
+		
+		<s:Group id="contenido" visible="false">
+			<s:Image  id="no_wind_p" x="133" y="7" width="40" height="38"
+					  source="assets/tiempo/t_no_wind_p.png" visible="false" />
+			
+			<s:Image  id="dir_p" x="133" y="7" width="40" height="38"
+					  source="assets/tiempo/t_dir_p.png" />
+			
+			<s:Image x="0" y="0" width="65" height="65" source="{'assets/tiempo/peq/'+codigo+'.png'}"/>
+			<s:Label x="68" y="13" fontSize="32" text="{temp}"/>
+			<s:Label x="61" y="48" fontSize="13" text="{barra_inf}"/>
+		</s:Group>
+	</s:Group>
+	
+	
+</s:Group>

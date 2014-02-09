@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////
+//																
+//	CALCULADORA - COMPONENTE			 													
+//																
+//	- -															
+//	Jesús García González											
+//	Universidad Carlos III de Madrid								
+//	- -															
+//////////////////////////////////////////////////////////////// -->
+
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" width="100%" height="100%">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	
+	<fx:Script>
+		<![CDATA[
+			private var borrar:Boolean=false;				// Limpia el resultado si se hizo un cálculo
+			private var seguir:Boolean=true;				// Evita hacer más de un calculo
+			
+			private function addText( str:String ):void
+			{ 
+				if (borrar) input.text="";
+				
+				borrar=false;
+				input.text += str;
+			}
+			
+			private function eval(str:String):String
+			{ 
+				var result:Number;						// Almacena el resultado de la calculadora
+				var r:Array = str.split(" ");
+				var acum:Number=0; 							// lo que va acumulando
+				
+				switch (r[1]){
+					case "+": result=Number(r[0]) + Number(r[2]); break;
+					case "-": result=Number(r[0]) - Number(r[2]); break;
+					case "x": result=Number(r[0]) * Number(r[2]); break;
+					case "/": result=Number(r[0]) / Number(r[2]); break;
+				}
+				
+				// reinicia la calculadora
+				borrar=true;
+				seguir=true;
+				
+				if (result.toString()!="NaN"){
+					return result.toString();
+				}
+				else{
+					return "";
+				}
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:Rect width="100%" height="100%" alpha="0.5">
+		<s:fill>
+			<s:SolidColor color="black"/>
+		</s:fill>
+	</s:Rect>	
+	
+	<s:Panel id="calculadora" width="264" height="370" horizontalCenter="0" title="Calculadora"
+			 verticalCenter="-70">
+		
+		<s:TextInput id="input" x="18" y="10" width="228" fontSize="24" text=""
+					 textAlign="right"/>
+		<s:Button x="18" y="119" width="50" label="7" click="addText( '7' )"/>
+		<s:Button x="78" y="119" width="50" label="8" click="addText( '8' )"/>
+		<s:Button x="138" y="119" width="50" label="9" click="addText( '9' )"/>
+		<s:Button x="18" y="172" width="50" label="4" click="addText( '4' )"/>
+		<s:Button x="78" y="172" width="50" label="5" click="addText( '5' )"/>
+		<s:Button x="138" y="172" width="50" label="6" click="addText( '6' )"/>
+		<s:Button x="18" y="225" width="50" label="1" click="addText( '1' )"/>
+		<s:Button x="78" y="225" width="50" label="2" click="addText( '2' )"/>
+		<s:Button x="138" y="225" width="50" label="3" click="addText( '3' )"/>
+		<s:Button x="18" y="278" width="112" label="0" click="addText( '0' )"/>
+		<s:Button x="138" y="278" width="50" label="." click="addText( '.' )"/>
+		<s:Button x="196" y="172" width="50" label="+" click="if (seguir) addText(' + '); 	seguir=false"/>
+		<s:Button x="196" y="119" width="50" label="-" click="if (seguir) addText(' - '); 	seguir=false"/>
+		<s:Button x="196" y="66" width="50" label="x" click="if  (seguir) addText(' x '); 	seguir=false"/>
+		<s:Button x="138" y="66" width="50" label="/" click="if  (seguir) addText(' / '); 	seguir=false"/>
+		<s:Button click="input.text =''" label="Borrar" x="18" y="66" width="110"  /> 
+		<s:Button x="196" y="225" width="50" height="96" label="="
+				  click="input.text = eval( input.text )"/> 
+		
+	</s:Panel>   
+	
+	
+</s:Group>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////
+//																
+//	Listado de Activos		 													
+//	
+//  Muestra un listado con los objetos activos en el mapa.
+//  Al seleccionar un objeto el mapa se centra ubucando al activo en el centro del mapa.
+//
+// 	Recibe como parámetro el array de los datos del listado completo
+//	- -															
+//	Jesús García González											
+//	Universidad Carlos III de Madrid								
+//	- -															
+//////////////////////////////////////////////////////////////// -->
+
+
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		creationComplete="init_listado()">
+
+
+	
+	<fx:Script>
+		<![CDATA[
+			import com.bomberos.componentes.*;
+			
+			import mx.collections.ArrayCollection;
+			
+			import spark.components.Label;
+			
+			//-------------------------------------------------------------------
+			// Recibe como parámetro el array con los datos xml de las unidades
+			//-------------------------------------------------------------------
+			[Bindable] public var list_data:ArrayCollection;
+			
+
+			
+			//-----------------------------------
+			//  Función inicial
+			//-----------------------------------
+			private function init_listado():void{
+	
+				// Por cada iteracción inserta un objeto en la lista:
+				for (var i:int = 0; i < list_data.length; i++) {
+					
+					switch(list_data[i].tipo)
+					{
+						case "bombero":
+						{
+							var obj:ItemBombero = new ItemBombero();				// Crea el obejto tipo
+							
+							obj.nombre =list_data[i].nombre;						// Le asigna los valores de la iteracción
+							obj.rango = list_data[i].rango;
+							obj.ox 	  =	list_data[i].ox;
+							obj.pulso = list_data[i].pulso;
+							obj.explo = list_data[i].explo;
+							obj.dir   =	list_data[i].coordinates;
+							
+							if (list_data[i].estado=="ocupado") {lista_activos.addElement(obj) }							// Lo Añade al elemento lista							
+							break;
+						}
+							
+						case "dotacion":
+						{
+							var dot:ItemDotacion = new ItemDotacion();				// Crea el obejto tipo
+							
+							dot.nombre =list_data[i].nombre;						// Le asigna los valores de la iteracción
+							dot.tipo = list_data[i].tipo;
+							dot.cisterna =	list_data[i].cisterna;
+							dot.anemo = list_data[i].anemo;
+							dot.vele  = list_data[i].vele;
+							dot.dir   =	list_data[i].coordinates;
+							
+							if (list_data[i].estado=="ocupado") {lista_activos.addElement(dot)}		// Lo Añade al elemento lista							
+							break;
+						}
+						
+						case "cisterna":
+						{
+							var cis:ItemDotacion = new ItemDotacion();				// Crea el obejto tipo
+							
+							cis.nombre =list_data[i].nombre;						// Le asigna los valores de la iteracción
+							cis.tipo = list_data[i].tipo;
+							cis.cisterna =	list_data[i].cisterna;
+							cis.anemo = list_data[i].anemo;
+							cis.vele  = list_data[i].vele;
+							cis.dir   =	list_data[i].coordinates;
+							
+							if (list_data[i].estado=="ocupado") {lista_activos.addElement(cis) }							// Lo Añade al elemento lista		
+							break;
+						}
+							
+							
+						case "helicoptero":
+						{
+							var hel:ItemHelicoptero = new ItemHelicoptero();				// Crea el obejto tipo
+							
+							hel.nombre =list_data[i].nombre;						// Le asigna los valores de la iteracción
+							hel.altura = list_data[i].alt;
+							hel.dir   =	list_data[i].coordinates;
+							
+							if (list_data[i].estado=="ocupado") {lista_activos.addElement(hel) }							// Lo Añade al elemento lista		
+							break;
+						}
+					}
+				} // fin del for
+							
+			}// Fin de la funcion init();
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+	<!-- ******************************************************
+	**
+	**  Ventana del listado donde se muestran los activos
+	**
+	***********************************************************-->
+	<s:VGroup>
+		<s:Scroller id="cuadro_info">
+			<!-- Tile Group muestra la información en tipo mosaico -->	
+			<s:TileGroup id="lista_activos" width="227" height="224" horizontalAlign="right"
+						 orientation="rows" verticalAlign="bottom" verticalGap="0">
+				<!--Seañaden aquí los objetos dinámicamente-->
+			</s:TileGroup>		
+		</s:Scroller>
+	</s:VGroup>
+	
+	
+	
+	
+	
+	<!-- Scroller: hace efeciva la acción del scroll. Con orientación: "rows" o "columns" para vertical u orizaontal --> 
+
+	
+</s:Group>

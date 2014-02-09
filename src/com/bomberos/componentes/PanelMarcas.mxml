@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="1276" height="798"
+		 
+		 xmlns:contenedores="todo.contenedores.*"
+		 xmlns:clases="com.bomberos.clases"
+		 xmlns:maps="com.google.maps.*"
+		 xmlns:controls="com.google.maps.controls.*"
+		 >
+	
+	<fx:Declarations>
+		
+		<!--Efectos de transicción ALPHA, pueden aplicarse a cualquier componente-->
+		<s:Fade alphaFrom="0" alphaTo="1" duration="1500" id="entra"/>
+		<s:Fade alphaFrom="1" alphaTo="0" duration="1000" id="sale" />
+		<s:RadioButtonGroup id="r_poligonos"/>
+	
+	</fx:Declarations>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.google.maps.Color;
+			import com.google.maps.InfoWindowOptions;
+			import com.google.maps.MapMouseEvent;
+			import com.google.maps.MapType;
+			import com.google.maps.interfaces.IOverlay;
+			import com.google.maps.overlays.*;
+			import com.google.maps.overlays.Marker;
+			import com.google.maps.overlays.MarkerOptions;
+			import com.google.maps.styles.*;
+	//		import todo.contenedores.bottom_bar;
+			
+
+			
+			private var color_marca:String = "Azul";				// Recoje el valor del color elegido para las marcas
+			private var color_poligono:String = "Azul";				// Recoje el valor del color elegido para los polígonos
+			
+
+			//Activación de las marcas
+			private function goMarcas():void{
+			//	if (togglePoligonos) addPoligonos();	
+				if (togglePoligonos){addPoligonos()}
+				addMarcas(); 			//Iniciamos la añadición de marcas al abir el panel
+				
+				b_activar_marcacion.enabled=true;
+			    if (array_marcas.length>0) { b_last_marca.enabled=true; }
+				texto_marca.enabled=true;
+				b_color.enabled=true;
+				borrar_t_marca.enabled=true;
+			//	b_borrar_marcas.enabled=true;
+				
+				rm_poligono.enabled=false;
+				rm_linea.enabled=false;
+				b_activar_poligono.enabled=false;
+				b_last_poligono.enabled=false;
+			}
+			
+			private function goPoligonos():void{
+				if (toggleMarcas){addMarcas()}
+				addPoligonos();
+			 	
+				rm_poligono.enabled=true;
+				rm_poligono.selected=true;
+				rm_linea.enabled=true;
+				b_activar_poligono.enabled=true;
+				b_last_poligono.enabled=true;
+			
+				
+				b_activar_marcacion.enabled=false;
+				b_last_marca.enabled=false;
+				texto_marca.enabled=false;
+				b_color.enabled=false;
+				borrar_t_marca.enabled=false;
+			//	b_borrar_marcas.enabled=false;
+			}
+			
+
+/**************************************************************
+ *   AÑADIR MARCAS			
+ *************************************************************/
+				
+			private var toggleMarcas:Boolean = false;					// Activación del modo de dibujo de marcas
+			private var array_marcas:Array = new Array();
+			private var grupo_marca:IOverlay;	
+			
+			
+			// función para activar o desactivar el botón de marcació
+			// Activar Marcas
+			private function addMarcas():void{
+				
+				if (!toggleMarcas) {map.addEventListener(MapMouseEvent.MOUSE_UP, addMarcasMapa)}
+				else { map.removeEventListener(MapMouseEvent.MOUSE_UP, addMarcasMapa)}
+				toggleMarcas = !toggleMarcas;
+				b_activar_marcacion.emphasized = !b_activar_marcacion.emphasized;
+			}
+			
+			private function addMarcasMapa(evento:MapMouseEvent):void{
+				
+				// Añadimos una marca ahí donde se pulsa! bienn (Más buien cuando se levanta el dedo pero bueno! jaj)
+				
+				// Se añade la marca pinchada al array
+				array_marcas.push(creaMarca(evento));
+								
+				//Imprime la última marca almacenada en el array
+				map.capa_marcas.addOverlay(array_marcas[array_marcas.length -1]);
+				b_last_marca.enabled=true;
+			}// fin de addMarca
+			
+			private function deleteLastMarca(e:Event):void {
+			
+				//limpia las marcas en pantalla 
+				map.capa_marcas.clear();
+				
+				if (array_marcas.length > 0) {
+					array_marcas.pop();								// Borra el último elemento del array
+				}
+				// y vuelve a pintar el array
+				for (var i:int=0;i<array_marcas.length;i++){
+					map.capa_marcas.addOverlay(array_marcas[i]);
+				}
+				if (array_marcas.length == 0){b_last_marca.enabled=false}
+			}
+		
+			
+			private function creaMarca(evento:MapMouseEvent):Marker{
+				
+				trace("entra a crear la marca");
+				var relleno:Color = elegirColor(color_marca);
+				var win_texto:String = texto_marca.text;
+				var marca:Marker = new Marker(evento.latLng,new MarkerOptions({
+					//strokeStyle: new StrokeStyle({color: 0x000000}),						// Toma el color por defecto.
+					fillStyle: new FillStyle({color: relleno.rgb, alpha: 0.8}),
+					radius: 12,
+					hasShadow: true  }) ); 
+				
+				
+				// Añade la ventana de información
+				if ((texto_marca.text != "Texto de marca ...") && (texto_marca.text != "") && (texto_marca.text != " ")) {	
+					marca.addEventListener(MapMouseEvent.ROLL_OVER, function(event:Event):void { 
+						marca.openInfoWindow(new InfoWindowOptions( { title: win_texto} )); 
+					})
+				}
+				
+				return marca;
+			}
+			
+			// Función de transformación de color
+			private function elegirColor(color:String):Color{
+				var rcolor:Color;
+				switch (color){
+					
+					case "Rojo": 		rcolor=new Color(0xC70000); break; 
+					case "Amarillo": 	rcolor=new Color(0xFFF000); break;
+					case "Verde": 		rcolor=new Color(0x00E61B); break;
+					case "Azul": 		rcolor=new Color(0x0011D1); break;
+				}
+				return rcolor;
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				color_marca= event.target.label;
+				b_color.closeDropDown();
+			}
+
+			
+			
+/**************************************************************
+ *   AÑADIR POLÍGONOS
+ *************************************************************/		
+						
+			import com.google.maps.LatLng;
+//			private var testPoint:Marker;
+			private var array_poligono:Array = new Array();
+			private var modo_poligono:Boolean;
+			private var grupo_poligono:IOverlay;	
+			
+			// Toggles para activar y desactuvar los botones
+			private var togglePoligonos:Boolean = false;
+			
+			// Activar polígonos
+			private function addPoligonos():void{
+				
+				if (!togglePoligonos) {map.addEventListener(MapMouseEvent.MOUSE_UP, addPoligonoMapa)}
+				else { map.removeEventListener(MapMouseEvent.MOUSE_UP, addPoligonoMapa)}
+				togglePoligonos = !togglePoligonos;
+				b_activar_poligono.emphasized = !b_activar_poligono.emphasized;
+				
+			}
+			
+			private function addPoligonoMapa(e:MapMouseEvent):void {
+				var mapa_pulsado:LatLng = e.latLng;
+				array_poligono.push(mapa_pulsado);						// Almacena en el array los puntos añadidos
+				dibujaPoligono();										// Dibuja la coordenada introducida
+			}
+			
+			private function deleteLastLatLng(e:Event):void {
+				if (array_poligono.length > 0) {
+					array_poligono.pop();								// Borra el último elemento del array
+				}
+				dibujaPoligono();
+			}
+			
+			private function borraPoligono(e:Event):void{
+				while (array_poligono.length > 0) {
+					deleteLastLatLng(e);								// recorre el array borrando los puntos
+				}
+			}
+			
+			// Clear current Map
+			private function clearMap(e:Event):void {
+				map.capa_poligonos.clear(); //map.clearOverlays();
+				grupo_poligono = null;
+				array_poligono.length = 0;
+			}
+			
+			// Toggle from Polygon PolyLine mode
+			private function toggleDrawMode(e:Event):void {
+				map.capa_poligonos.clear();  //map.clearOverlays();
+				grupo_poligono = null;
+				dibujaPoligono();
+			}
+			
+			private function dibujaPoligono():void {
+				map.capa_poligonos.clear(); //	map.clearOverlays();
+				if (array_poligono.length > 1) {
+					//Re-create Polyline/Polygon
+					modo_poligono = rm_poligono.selected;
+					if (modo_poligono) {
+						grupo_poligono = new Polygon(array_poligono);
+					} else {
+						grupo_poligono = new Polyline(array_poligono);
+					}
+					map.capa_poligonos.addOverlay(grupo_poligono);
+				}
+				
+				if (array_poligono.length > 0) {
+					// Grab last point of polyPoints to add new marker
+					var tmpLatLng:LatLng = array_poligono[array_poligono.length -1];
+					map.capa_poligonos.addOverlay(new Marker(tmpLatLng));
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	
+	
+	<!-- COLOR DEL FONDO DE LA HOJA -->
+	<s:Rect id="backgroundRect" x="1035" y="22" width="245" height="708">
+		<s:fill>
+			<s:LinearGradient rotation="90">
+				<s:GradientEntry color="#666666" />
+				<s:GradientEntry color="#aaaaaa" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	
+	<!--  ******************* * ** * ** * ** * *  ESTE MAPA TIENE QUE SER BORRADO UNA VEZ QUE SE CAMBIE A LOS BOMBEROS-->
+
+	<!-- Creación del mapa. -->
+	<clases:MapCentral id="map" width="1035" height="100%"/>
+	
+
+	
+	
+	<!--<s:Button id="b_goPoligonos" x="1163" y="198" width="95" label="+ Zona" click="goPoligonos()"
+			  emphasized="false"/>
+	<s:Button id="b_goMarcas" x="1044" y="198" width="95" label="+ Marcas" click="goMarcas()"
+			  emphasized="false"/>-->
+	<s:TextArea x="1046" y="21" width="216" height="63" editable="false"
+				text="Info: Añadir marcas o zonas sobre el mapa."/>
+	
+	
+	<!-- ********************************************
+	PANEL GENERAL
+	******************************************** -->
+	
+	<s:Group id="panel_general" x="1035" y="92" width="245" height="638"  visible="true">
+	
+		
+	<s:RadioButton id="rMarcas" x="10" y="10" label="Crear Marcas" buttonDown="goMarcas()"
+				   enabled="true" selected="false"/>
+
+		<s:TextInput id="texto_marca" x="15" y="105" width="170" enabled="false" fontStyle="italic"
+					 text="Texto de marca ..."/>
+		<s:Button id="borrar_t_marca" x="193" y="105" width="38" height="33" label="X"
+				  enabled="false" click="{texto_marca.text='';}"/>
+		
+		<s:Button id="b_activar_marcacion" x="15" y="54" width="170" label="Marcar"
+				  click="addMarcas()" enabled="false"/>
+		
+		
+		<s:CalloutButton id="b_color" x="193" y="54" width="38" label="C"
+						 calloutDestructionPolicy="never" enabled="false" horizontalPosition="after">
+			<!-- layout the callout content here -->
+			<s:calloutLayout>
+				<s:VerticalLayout paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" horizontalAlign="center" gap="5"/>
+			</s:calloutLayout>
+			<s:calloutContent>
+				<s:Button label="Azul" width="90" click="button1_clickHandler(event)"/>
+				<s:Button id="btn" label="Amarillo" width="90" click="button1_clickHandler(event)"/>
+				<s:Button label="Verde" width="90" click="button1_clickHandler(event)"/>
+				<s:Button  label="Rojo" width="90" click="button1_clickHandler(event)"/>
+			</s:calloutContent>
+		</s:CalloutButton>
+						 
+			
+		
+		<s:Button id="b_last_marca" x="15" y="157" width="170" label="Borrar Último"
+				  click="deleteLastMarca(event)" enabled="false"/>
+		
+		<!--<s:Button id="b_borrar_marcas" x="15" y="207" width="170" label="Borrar Marcas"
+				  click="{map.capa_marcas.clear()}" enabled="false"/>-->
+		
+		<s:Button id="b_borrar_marcas0" x="65" y="255" width="170" label="Ocultar Marcas"
+				  click="{map.capa_marcas.visible = !map.capa_marcas.visible}" enabled="true"/>
+	
+		
+		
+	<s:RadioButton id="rPoligonos" x="14" y="315" label="Crear Zona" buttonDown="goPoligonos()"/>
+		
+		<s:Button id="b_activar_poligono" x="15" y="461" width="216" label="Activar Marcación"
+				  click="addPoligonos()" enabled="false"/>
+		<s:Button id="b_last_poligono" y="513" width="216" label="Borrar último punto"
+				  click="deleteLastLatLng(event);" enabled="false" horizontalCenter="0"/>
+		<s:RadioButton id="rm_poligono" x="59" y="364" label="Relleno"
+					   click="toggleDrawMode(event);" enabled="false" groupName="drawmode"
+					   selected="false"/>
+		<s:RadioButton id="rm_linea" x="59" y="410" label="Líneas"
+					   click="toggleDrawMode(event);" enabled="false" groupName="drawmode"/>
+		
+	
+		<s:Button x="79" y="591" label="Terminar"/>
+	</s:Group>
+	
+	
+</s:Group>

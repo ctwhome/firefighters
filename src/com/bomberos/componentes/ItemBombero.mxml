@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<componentes:ItemLista xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" xmlns:componentes="com.bomberos.componentes.*"
+					   creationComplete="init()" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+
+
+	<fx:Script>
+		<![CDATA[
+		
+			
+			//-----------------------------------
+			//  Parámetros del objeto
+			//-----------------------------------			
+			
+			[Bindable] public var nombre:String; 
+			[Bindable] public var rango:String; 				
+			[Bindable] public var ox:String;
+			[Bindable] public var pulso:String;
+			[Bindable] public var explo:String;
+			[Bindable] public var dir:String;				// Permite centrar la situación del elemento con sus coordenadas propias 
+			
+			[Bindable] private var img_explo:String;			// Elige la imagen que se muestra
+			
+			private var select:Boolean=false;
+			
+			
+			import com.bomberos.clases.Llamada;
+			import com.bomberos.clases.ClaseDispatcher;
+			
+			private var dispatcher:ClaseDispatcher;
+			//-----------------------------------
+			//  FUNCIONES DEL OBJETO LISTA
+			//-----------------------------------
+			// Al activarse el item de la lista
+			// selecciona las variables que se muestran
+			private function init():void{
+				
+				var n_ox:Number = Number(ox);
+				var n_p:Number = Number(pulso);
+				var n_e:Number = Number(explo);
+				
+				
+				//-----------------------------------
+				//  Color del oxígeno
+				//-----------------------------------
+				
+				if (n_p < 51)   {pulso_id.setStyle("color", 0xFF0000)}						//Rojo
+				
+				if ((n_p > 50) && (n_p <101))  {pulso_id.setStyle("color", 0x009245)}		// Verde
+				
+				if ((n_p > 100) && (n_p <151))  {pulso_id.setStyle("color", 0x00A4FF)}		// Azul
+				
+				if ((n_p > 150) && (n_p <181))  {pulso_id.setStyle("color", 0xFF931E)}   	// Naranja
+				
+				if (n_p > 180)   {pulso_id.setStyle("color", 0xFF0000)}						//Rojo
+				
+				
+				
+				//-----------------------------------
+				//  Color del pulso
+				//-----------------------------------
+				if (n_ox < 21){	ox_id.setStyle("color", 0xFF0000)}   	// Rojo
+				
+				if ((n_ox > 20) && (n_ox <51)) 
+				{ox_id.setStyle("color", 0xFF931E)}  					// Naranja
+				
+				if (n_ox > 50) {ox_id.setStyle("color", 0x009245)}   	// Verde
+				
+				
+				
+				
+				//-----------------------------------
+				//  Icono explosímetro
+				//-----------------------------------
+				if (n_e < 31)
+					{img_explo="assets/listas/explo3.png"}
+				
+				if ((n_e> 30) && (n_e<61)) 	
+					{img_explo="assets/listas/explo2.png"}				
+				if (n_e> 60)
+					{img_explo="assets/listas/explo1.png"}					
+				
+				
+				
+				// Añade el listener para cuando el item es pulsado
+				addEventListener(MouseEvent.CLICK, pulsado);
+				
+				
+				
+			}
+			
+
+			//-----------------------------------------------------------------
+			// Se inicia cuando el objeto es pulsado en la lista
+			//-----------------------------------------------------------------			
+			private function pulsado(e:MouseEvent):void{
+				// Enviar la señál de liberar y pulsar el propio
+				
+				//Pulsar el propio
+				
+				if (!select)	{fondo.color = 0xfff4db }
+				else 		{fondo.color = 0xf7f7f7}
+				select = !select; 
+				
+				
+				
+				
+				// Cuando quiero hacer la llamapa hago esto:
+				dispatcher = ClaseDispatcher.getInstancia();
+				dispatcher.dispatchEvent(new Llamada(Llamada.ACCION,'UNIDADES',dir));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Rect width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor id="fondo" color="#f7f7f7"/>
+		</s:fill>
+	</s:Rect>
+	<s:Image width="227" height="56" source="assets/listas/item_bombero.png"/>
+	
+	<s:Label left="44" top="11" fontSize="17" fontWeight="bold" text="{nombre}"/>
+	<s:Label id="ox_id" left="64" top="34" fontSize="15" fontWeight="bold" text="{ox}%"/>
+	<s:Label id="pulso_id" left="144" top="34" fontSize="15" fontWeight="bold" text="{pulso}"/>
+	<!--<s:Label id="explo" left="194" top="30" text="{explo}"/>-->
+	<s:Image  left="194" top="30" width="21" height="19" source="{img_explo}"/>
+
+</componentes:ItemLista>

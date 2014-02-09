@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>							
+<!--
+////////////////////////////////////////////////////////////////
+//																
+//	BOMBEROS-MAIN		 													
+//	
+//  Contiene la instancia del Mapa principal y las 
+//	instancias de los componentes que hacen uso de él.															
+//
+//	- -															
+//	Jesús García González											
+//	Universidad Carlos III de Madrid								
+//	- -															
+//////////////////////////////////////////////////////////////// -->
+
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   
+			   xmlns:contenedores="com.bomberos.contenedores.*"
+			   xmlns:clases="com.bomberos.clases.*" 
+			   
+			   xmlns:maps="com.google.maps.*"
+			   xmlns:XML="com.bomberos.XML.*"
+			   xmlns:componentes="com.bomberos.componentes.*"
+			   backgroundColor="#676767"
+			   width="1280" height="720"
+			   creationComplete="init()" >
+	
+	<fx:Declarations>
+		<!-- Definición de constantes -->
+		<fx:int id="tam_menu">170</fx:int>	<!-- Tamaño de las ventanas de menús de buttom_bar -->
+		
+		<!--********************************************************************
+		**  Servicio que recoge los datos XML desde HTTP para los PDI
+		************************************************************************ -->
+		
+		<!--<s:HTTPService id="datos_capas_serv" url="http://localhost:8888/xml/capas.xml"  result="PDICargados()"/>
+		<s:HTTPService id="datos_unidades_serv" url="http://localhost:8888/xml/unidades.xml"  result="unidadesCargadas('carga1')"/>
+		<s:HTTPService id="datos_unidades_serv2" url="http://localhost:8888/xml/unidades2.xml"  result="unidadesCargadas('carga2')"/>-->
+		<s:HTTPService id="datos_capas_serv" url="http://ctwhome.com/xml/capas.xml"  result="PDICargados()"/>
+		<s:HTTPService id="datos_unidades_serv" url="http://ctwhome.com/xml/unidades.xml"  result="unidadesCargadas('carga1')"/>
+		<s:HTTPService id="datos_unidades_serv2" url="http://ctwhome.com/xml/unidades2.xml"  result="unidadesCargadas('carga2')"/>
+		
+		
+	</fx:Declarations>
+	
+	
+	<!--*****************************
+	**  Estilos de la aplicación
+	***************************** -->
+	<fx:Style source="estilos/Bomberos.css"/>
+	<!--<fx:Style source="estilos/style2.css"/>-->
+	
+	
+	<!--*****************************
+	**  Funciones del main
+	***************************** -->
+	<fx:Script source="com/bomberos/clases/funciones.as"/>
+	<fx:Script source="com/bomberos/clases/main.as"/>
+	<fx:Script source="com/bomberos/clases/panel_marcas.as"/>
+	<fx:Script source="com/bomberos/clases/capas.as"/>
+	<fx:Script source="com/bomberos/clases/unidades.as"/>
+	<fx:Script source="com/bomberos/clases/SolicitarRecursos.as"/>	
+	<!--<fx:Script source="../clases/recursos.as"/>-->
+	<fx:Script source="com/bomberos/clases/recursos.as"/>
+	<fx:Script source="com/bomberos/clases/Medir.as"/>
+	<fx:Script source="com/bomberos/clases/cargarXML.as"/>
+	
+	
+	<!--*****************************
+	**  Degradado de fondo
+	***************************** -->
+	<s:Rect id="backgroundFondo" width="100%" height="100%">
+		<s:fill>
+			<s:LinearGradient rotation="90">
+				<s:GradientEntry color="#999999" />
+				<s:GradientEntry color="#676767" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	
+	
+	<!-- ******************************************************
+	**
+	**  Contenedores de la aplicación
+	**
+	***********************************************************-->
+	<s:Group>
+		
+		<!--*****************************
+		**  Barra superior (top_bar)
+		***************************** -->
+		<contenedores:top_bar/>	
+		
+		<!--*****************************
+		**  Barra Lateral
+		***************************** -->	
+		<s:Image x="1035" y="22" width="245" height="628" source="assets/img/lateral_bar.png"/>
+		<contenedores:lateral_bar x="1035" y="22"/>
+		<!--	<componentes:listado_rec id="listado_recursos" x="1044" y="260"/>-->
+		<!--	<componentes:listado_rec id="lp_recursos" x="1044" y="260"/>-->
+	
+		<!--LISTADO RECURSOS-->
+		<s:Group x="1044" y="258" width="227" height="90">
+			<s:VGroup>
+				<s:Scroller>
+					<s:TileGroup width="227"  id="lp_recursos"  height="90" horizontalAlign="right"
+								 orientation="rows" verticalAlign="bottom" verticalGap="0">
+						<!--Seañaden aquí los objetos dinámicamente-->
+					</s:TileGroup>
+				</s:Scroller>
+			</s:VGroup>
+		</s:Group>
+						
+		<s:Group id="lp_elementos" x="1044" y="405"/>
+		
+		
+		
+		<!--*****************************
+		**  Buscador de direcciones
+		***************************** -->
+		<s:TextInput id="address" x="1053" y="175" width="172" prompt="Buscar dirección" text=""/>
+		<s:Button x="1233" y="175" height="33" label="ir" click=" if (address.text==''){ } else{doGeocode(event); address.text=''} " />
+		
+		<!--*****************************
+		**  Instacia Mapa principal
+		***************************** -->
+		<clases:MapCentral id="map" width="1035" height="660" y="22"/>
+		<s:Button x="10" y="310" chromeColor="#D1D1D1" click="map.zoomIn()"  icon="assets/icons/mas.png"/>
+		<s:Button x="10" y="360" width="38" label="-" chromeColor="#D1D1D1" click="map.zoomOut()"/>
+		
+		
+		<!--*****************************
+		**  Instancia del Tiempo
+		***************************** -->
+		<componentes:weather id="visor_tiempo" x="6" y="29"/>
+		<s:Image x="5" y="585" width="53" height="61" source="assets/tiempo/t_brujula.png" alpha="0.5"/>
+		
+		<!--*****************************
+		**  Barra inferior (bottom_bar)
+		***************************** -->	
+		<contenedores:bottom_bar id="bottom_bar"/>
+		
+		<!--*****************************
+		**  Recursos
+		***************************** -->
+		<s:Group id="gb_recursos">
+			
+			
+			<s:HGroup  x="388" y="655" gap="5">
+				
+				
+				<s:Button id="b_recursos" width="90" height="60" label="Unidad"
+						  click="recursosAccion(event)" fontFamily="Arial" fontSize="12"
+						  icon="@Embed('assets/icons/dotacion.png')" iconPlacement="top" letterSpacing="1"
+						  textShadowColor="0x000000"/>
+				
+				<s:Button id="b_cisterna" width="90" height="60" label="Cisterna"
+						  click="recursosAccion(event)" fontFamily="Arial" fontSize="12"
+						  icon="@Embed('assets/icons/cis.png')" iconPlacement="top" letterSpacing="1"
+						  textShadowColor="0x000000"/>
+				
+				<s:Button id="b_helicoptero" width="90" height="60" label="Helicóptero"
+						  click="recursosAccion(event)" fontFamily="Arial" fontSize="12"
+						  icon="@Embed('assets/icons/hel.png')" iconPlacement="top" letterSpacing="1"
+						  textShadowColor="0x000000"/>
+				
+				
+				
+				<s:Label width="20"/>
+				<s:Button id="b_peticion" x="697" y="655" width="90" height="60" label="Solicitar" 
+						  click="panel_recursos.visible=true" fontFamily="Arial" fontSize="12"
+						  icon="@Embed('assets/icons/activos.png')" iconPlacement="top" letterSpacing="1"
+						  textShadowColor="0x000000"/>
+				
+				
+			</s:HGroup>
+			
+			<!-- unidad -->
+			<s:Image id="punto_unidad" x="454" y="651" width="31" height="32" source="assets/icons/punto_azul.png" visible="false"/>
+			<s:Label id="num_unidad" x="465" y="657" color="#FFFFFF" fontWeight="bold" text="3" visible="false"/>
+			
+			<!--cisterna-->
+			<s:Image id="punto_cis" x="547" y="651" width="31" height="32" source="assets/icons/punto_azul.png" visible="false"/>
+			<s:Label id="num_cis" x="558" y="657" color="#FFFFFF" fontWeight="bold" text="2" visible="false"/>
+			
+			<!--helicoptero-->
+			<s:Image id="punto_hel" x="644" y="651" width="31" height="32" source="assets/icons/punto_azul.png" visible="false"/>
+			<s:Label id="num_hel" x="655" y="657" color="#FFFFFF" fontWeight="bold" text="0" visible="false"/>
+			
+		</s:Group>
+	</s:Group>
+	
+	
+	
+	
+	<!-- ******************************************************
+	**
+	**  Panel de introdución de marcas
+	**  Visible = false
+	**
+	***********************************************************-->
+	
+	<s:Group id="grupo_panel_marcas" visible="false">
+		
+		<!--*****************************
+		**  Degradado del panel
+		***************************** -->
+		<s:Rect id="backgroundRect" x="1035" y="22" width="245" height="628">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<!--<s:GradientEntry color="#00a6ff" />  COLOR AZUL-->
+					<s:GradientEntry color="#999999" />
+					<s:GradientEntry color="#676767" />
+					<s:GradientEntry color="#676767" />
+					<s:GradientEntry color="#676767" />
+					<s:GradientEntry color="#676767" />
+					<s:GradientEntry color="#999999" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		
+			
+		
+		<s:Group id="panel_general" x="1035" y="92" width="245" height="638">
+			
+			<!--*****************************
+			**  Marcas
+			***************************** -->
+			<s:Label x="11" y="20" color="#E3E3E3" fontSize="20" fontWeight="normal"
+					 text="Marcas" textDecoration="underline"/>
+			<s:Label x="15" y="301" color="#E3E3E3" fontSize="20" fontWeight="normal"
+					 text="Zona" textDecoration="underline"/>
+			
+			<s:TextInput id="texto_marca" x="15" y="110" width="170" color="#D0D0D0" enabled="false"
+						 fontStyle="italic" prompt="Texto de la marca..." text="" click="texto_marca.selectable=true"/>
+			<s:Button id="borrar_t_marca" x="193" y="110" width="38" height="33" label="X"
+					  enabled="false" click="{texto_marca.text='';}"/>
+			
+			<s:Button id="b_activar_marcacion" x="15" y="54" width="108" label="Añadir"  icon="assets/icons/peq/mas.png"
+					  click="goMarcas()" />
+			
+			
+			<!--*****************************
+			**  Selección del color marca
+			***************************** -->
+			<s:CalloutButton id="b_color" x="131" y="54" width="108" label="Color"
+							 calloutDestructionPolicy="never" enabled="false"
+							 horizontalPosition="after" icon="@Embed('assets/icons/peq/azul.png')">
+				<s:calloutLayout>
+					<s:VerticalLayout paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" horizontalAlign="center" gap="5"/>
+				</s:calloutLayout>
+				<s:calloutContent>
+					<s:Button label="Azul" 		id="b_icon_azul"		width="120"  icon="@Embed('assets/icons/peq/azul.png')"		click="cambiarIcono('azul',event)" />
+					<s:Button label="Amarillo"	id="b_icon_amarillo" 	width="120"  icon="@Embed('assets/icons/peq/amarillo.png')" 	click="cambiarIcono('amarillo',event)" />
+					<s:Button label="Verde"		id="b_icon_verde"		width="120"  icon="@Embed('assets/icons/peq/verde.png')" 		click="cambiarIcono('verde',event)" />
+					<s:Button label="Rojo" 		id="b_icon_rojo"		width="120"  icon="@Embed('assets/icons/peq/rojo.png')" 		click="cambiarIcono('rojo',event)" />
+				</s:calloutContent>
+			</s:CalloutButton>
+			
+			<s:Button id="b_last_marca" x="15" y="155" width="66" height="52" label="Último"
+					  click="deleteLastMarca(event)" enabled="false" fontSize="11"
+					  icon="assets/icons/peq/borrar.png" iconPlacement="top"/>
+			<s:Button id="b_sel_marca" x="91" y="155" width="66" height="52" label="Selec."
+					  click="borrarMarcaSel()" enabled="false" fontSize="11"
+					  icon="assets/icons/peq/borrar.png" iconPlacement="top"/>
+			<s:Button id="b_all_marca" x="165" y="155" width="66" height="52" label="Todas"
+					  click="borrarAllMarcas()" enabled="false" fontSize="11"
+					  icon="assets/icons/peq/borrar.png" iconPlacement="top"/>
+			
+			<s:CheckBox id="c_mostrar_marcas" x="15" y="221" label="Mostrar / Ocultar Marcas"
+						click="actualizarMostrarMarcas()"/>
+			
+			<!--*****************************
+			**  Polígonos-Zonas
+			***************************** -->			
+			<s:Button id="b_activar_poligono" x="15" y="335" width="216" label="Añadir Punto"  icon="assets/icons/peq/mas.png"
+					  click="goPoligonos()" />
+			
+			<s:Button id="b_last_poligono" x="15" y="390" width="100" label="Punto"
+					  click="deleteLastLatLng(event);" enabled="false" fontSize="11"
+					  icon="assets/icons/peq/borrar.png" iconPlacement="left"/>
+			
+			<s:Button id="b_all_poligono" x="130" y="390" width="100" label="Zona"
+					  click="borraPoligono();" enabled="false" fontSize="11"
+					  icon="assets/icons/peq/borrar.png" iconPlacement="left"/>
+			<!--<s:Button id="b_last_poligono" y="513" width="216" label="Borrar último punto"
+			click="deleteLastLatLng(event);" enabled="false" horizontalCenter="0"/>-->
+			<s:RadioButton id="rm_poligono" x="20" y="448" label="Relleno"
+						   click="toggleDrawMode(event);" enabled="false" groupName="drawmode"
+						   selected="true"/>
+			<s:RadioButton id="rm_linea" x="135" y="448" label="Líneas"
+						   click="toggleDrawMode(event);" enabled="false" groupName="drawmode"/>
+			<s:CheckBox id="c_mostrar_poligono" x="15" y="494" label="Mostrar / Ocultar Zonas"
+						click="actualizarMostrarPoligono()"/>
+			
+		</s:Group>
+		
+		
+		<!--*****************************
+		**  Texto de información
+		***************************** -->
+		<s:TextArea x="1047" y="29" width="216" height="63" color="#FFFFFF" editable="false"
+					fontWeight="bold" text="Info: Añadir marcas o zonas sobre el mapa."/>
+	</s:Group>	
+	
+	
+	
+	
+	
+	<!--************************************************************************
+	**  Pantalla de pedir más recursos: solo una funcionalidad
+	*************************************************************************-->	
+	<s:Group id="panel_recursos" width="100%" height="100%" visible="false" >
+		<s:Rect width="100%" height="100%" alpha="0.6" >
+			<s:fill>
+				<s:SolidColor color="black"/>
+			</s:fill>
+		</s:Rect>	
+		<s:Image x="64" y="15" width="930" height="600" source="assets/img/panel_recursos.png"/>
+	<!--	<s:Button x="396" y="598" label="Aceptar" click="panel_recursos.visible=false"/>-->
+		<s:Button x="631" y="457" width="145" height="49" label="Cancelar"
+				  click="panel_recursos.visible=false" fontSize="22" fontWeight="normal"/>
+	</s:Group>
+
+	
+	<!--************************************************************************
+	**  Pantalla Cargar XML
+	*************************************************************************-->	
+	<s:Group id="panel_xml" width="100%" height="100%" visible="false" >
+		<s:Rect width="100%" height="100%" alpha="0.6" >
+			<s:fill>
+				<s:SolidColor color="black"/>
+			</s:fill>
+		</s:Rect>	
+		<s:Image x="64" y="15" width="930" height="600" source="assets/img/panel_xml.png"/>
+		<s:Button id="Carga1" x="306" y="461" label="13 Unidades" click="resetApp(event)" fontSize="20"/>
+		<s:Button id="Carga2" x="590" y="461" label="5 Unidades" click="resetApp(event)" fontSize="20"
+				  fontWeight="normal"/>
+		<s:Button x="750" y="97" width="40" height="40" label="X" click="panel_xml.visible=false"
+				  fontWeight="normal"/>
+		<s:Image id="actual1" x="314" y="270" width="69" height="67" source="assets/img/actual.png" visible="false"/>
+		<s:Image id="actual2" x="591" y="270" width="69" height="67" source="assets/img/actual.png" visible="false"/>
+	</s:Group>
+
+	
+	
+	
+	<!--
+	<s:TextArea id="info_medir" x="993" y="655" width="281" height="60" color="#FFFFFF" editable="false" visible="false"
+				fontWeight="normal" text="Info: Pulsar sobre el mapa los puntos a medir."/>-->
+	
+	
+	
+	<s:Rect id="fondo_negro" width="100%" height="100%" alpha="0.5" visible="false">
+		<s:fill>
+			<s:SolidColor color="black"/>
+		</s:fill>
+	</s:Rect>	
+	
+	
+</s:Application>

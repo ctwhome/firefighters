@@ -1,0 +1,66 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+
+
+s|Button
+{
+	chrome-color: #272727;
+	selection-color: #9E9E9E;
+	focus-color: #FFD800;
+	font-size: 16;
+	font-family: "arial";
+	color: #FFFFFF;
+	vertical-align: bottom;
+	horizontal-align: left;
+	font-weight: normal;
+	text-decoration: none;
+	font-style: normal;
+	align: left;
+	symbol-color: #7F2222;
+	borderColor: black;
+
+}
+
+
+
+
+
+s|ToggleButton
+{
+	chrome-color: #272727;
+	selection-color: #ffffff;
+	focus-color: #ffffff;
+	font-size: 16;
+	font-family: "arial";
+	color: #FFFFFF;
+	vertical-align: bottom;
+	horizontal-align: left;
+	font-weight: normal;
+	text-decoration: none;
+	font-style: normal;
+	align: left;
+	symbol-color: #ffffff;
+	borderColor: yellow;
+}
+
+s|ToggleButton:upAndSelected{
+	chromeColor:#29b8ff;
+}
+
+
+s|BorderContainer{
+	backgroundAlpha:0.7; 
+	backgroundColor:"0x222222"; 
+	borderStyle:inset; 
+	borderAlpha:0; 
+	borderWeight:2; 
+	cornerRadius:5;
+}
+
+global
+{
+	focus-color: #FFA800;
+	content-background-alpha: 0.0;
+	chrome-color: #AAAAAA;
+	content-background-color: #000000;
+}

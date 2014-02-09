@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" width="227" height="56">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+<!--	Esta es la clase principal para las los item lista
+	aquí va el fondo que es una imagen con la flecha, dentro de él se colocarán los elementos
+	
+	icono y nombre también van aquí.
+	-->
+	
+</s:Group>

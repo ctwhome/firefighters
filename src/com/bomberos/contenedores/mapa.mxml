@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:clases="com.bomberos.clases.*"
+		 creationComplete="init()"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->	
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import com.bomberos.clases.Llamada;
+			import com.google.maps.MapType;				// Función cambiar de mapa
+			import com.bomberos.contenedores.mapa;
+			
+			/* public function cambiarMapa2(evento:String):void{
+				map.setMapType(MapType.PHYSICAL_MAP_TYPE);
+			} */
+			
+			
+			private function init():void{
+				recoge.addEventListener(Llamada.ACCION, recogeEvento);
+			//	trace("inicia mapa");
+
+			}
+			
+			private function recogeEvento(evento:Llamada):void{
+				trace(evento.tipo);
+			}
+			
+			// mainButtonClicked ejecuta la función indicada dependiendo del botón que haya lanzado el evento.
+		
+			public function cambiarMapa(evento:Llamada):void
+			{
+				
+			}			
+		]]>
+	</fx:Script>
+	<s:Group id="recoge"/>
+		
+	
+	<clases:MapCentral id="map"/>
+		
+</s:Group>

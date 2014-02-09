@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 creationComplete="init()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import flash.sensors.Geolocation;
+			protected var g:Geolocation;
+			import flash.utils.Timer;
+			import flash.events.TimerEvent;
+			
+			
+			private function init():void{
+				/* if (Geolocation.isSupported)
+				{
+					g = new Geolocation();
+					
+					if (g.muted)
+					{
+						l.text = "Acceso Al GPS denegado";
+						return;
+					}
+					
+					l.text = "Localizando GPS...";
+					
+					g.addEventListener(GeolocationEvent.UPDATE, function(event:GeolocationEvent):void {
+						l.text = "latitude = " + event.latitude + 
+						"\nlongitude = " + event.longitude +
+						"\naltitude = " + event.altitude +
+						"\nverticalAccuracy = " + event.verticalAccuracy +
+						"\nhorizontalAccuracy = " + event.horizontalAccuracy +
+						"\nspeed = " + event.speed +
+						"\nheading = " + event.heading +
+						"\ntimestamp = " + event.timestamp;
+					}, false, 0, true);
+				}
+				else { l.text = "Localización no soportada";}
+				 */
+				
+				//Timer para la hora
+				var myTimer:Timer = new Timer(60000);
+				myTimer.addEventListener("timer", timerHandler);
+				myTimer.start();
+			} // Fin de Init()
+			
+			private function timerHandler(event:TimerEvent):void{
+				fecha_hora.text = get_hora();
+			}
+			
+			
+			
+			/* Mostrar fecha y hora*/
+			public function get_hora():String{
+				var fecha : Date = new Date();
+				var meses:Array = new Array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio","Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+				var dias:Array = new Array("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" );
+				var minutosCero:String =''; if (fecha.getMinutes() < 10){minutosCero='0'}				
+				var mes_str:String = meses[fecha.getMonth()];
+				var dia_str:String = dias[fecha.getDay()];
+				var hora:String = fecha.getHours()+":"+minutosCero+fecha.getMinutes()+"  "+dia_str+" "+fecha.getDate()+" de "+mes_str+" de "+fecha.getFullYear(); 
+				return hora;
+			}
+		]]>
+		
+	</fx:Script>
+	
+	
+	
+	<!-- Color de Fondo -->
+	
+	<!--<s:Rect width="1280" height="22">
+		<s:fill>
+			<s:SolidColor color="#000000"/>						
+		</s:fill>
+	</s:Rect>-->
+	
+	
+	<!-- Elementos, como la hora y demás parámetros -->
+	<s:Image x="0" y="0" width="1280" height="22" source="assets/img/top_bar.png"/>
+	<s:Label id="l" x="10" y="5" color="0xbbbbbb"/>								<!-- Datos GPS -->
+	<s:Label id="fecha_hora" x="492" y="5"  text="{get_hora()}" color="0xbbbbbb"/>				
+	<!-- Fecha y Hora -->
+	
+	
+</s:Group>

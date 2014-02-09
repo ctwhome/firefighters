@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////
+//	
+//  BARRA INFERIOR (Bottom_bar)
+//
+//	Se encuentran los botones de las acciones		 													
+//	principales de la aplicación.
+//
+// Componentes: Panel Navegador Web
+//				
+//  															
+//	- -															
+//	Jesús García González											
+//	Universidad Carlos III de Madrid								
+//	- -															
+//////////////////////////////////////////////////////////////// -->
+
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:local="*"
+		 xmlns:componentes="com.bomberos.componentes.*"
+		 width="1280" height="720">
+	
+	<fx:Declarations>
+		<!--*****************************
+		**  Definición de constantes
+		***************************** -->
+		<fx:int id="tam_menu">170</fx:int>				<!-- Tamaño de las ventanas de menús de buttom_bar -->
+		
+		<!--********************************************************************
+		**  Servicio que recoge los datos XML desde HTTP para el Navegador
+		************************************************************************ -->
+	<!--	<s:HTTPService id="datos_marcadores" url="http://localhost:8888/xml/marcadores.xml" />	-->	
+	<s:HTTPService id="datos_marcadores" url="http://ctwhome.com/xml/marcadores.xml" />		
+		
+	</fx:Declarations>
+	
+	
+	<!--*****************************
+	**  Funciones Embedidas
+	***************************** -->
+	<fx:Script source="../clases/bottom_bar.as"/>
+	<fx:Script source="../clases/navegador.as"/>
+	
+	
+	
+	<!-- ******************************************************
+	**
+	**  Botones de la barra inferior
+	**
+	***********************************************************-->
+	<s:Group id="barra_completa" x="0" y="0">
+		
+		<s:Image x="0" y="650" width="1280" height="70" source="{assets.bottom_bar}"/>
+		
+		
+		
+		<s:Group id="bar">
+			
+			<!--*****************************
+			**  Imagen de fondo de la barra
+			***************************** -->	
+			<!--*****************************
+			**  Grupo Botones Mapa
+			***************************** -->		
+			<s:HGroup id="gb_mapas" gap="5" paddingLeft="10" y="655">
+				<!--*****************************
+				**  Tipo de mapa
+				***************************** -->
+				<s:CalloutButton id="b_mapas" x="9" y="736" width="90" height="60" label="Mapa"
+								 fontFamily="Arial" fontSize="12" icon="@Embed('assets/icons/mapa.png')"
+								 iconPlacement="top" letterSpacing="1" textShadowColor="0x000000"
+								 verticalPosition="before">
+					<s:calloutContent>
+						<s:BorderContainer>
+							<s:layout>
+								<s:VerticalLayout paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" gap="10"/>
+							</s:layout>
+							
+							<s:Button label="Rosado" 	id="b_rosado" icon="@Embed('assets/icons/mapa.png')"	iconPlacement="left" width="{tam_menu}" 
+									  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','ROSADO'));	button_clickHandler(); seleccionado('b_rosado')}" />
+							
+							<s:Button label="Atlas" 	id="b_atlas" icon="@Embed('assets/icons/mapa.png')"	iconPlacement="left" width="{tam_menu}" 
+									  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','ATLAS'));	button_clickHandler(); seleccionado('b_atlas')}" />
+							
+							<s:Button label="Contraste" 	id="b_contraste" icon="@Embed('assets/icons/mapa.png')"	iconPlacement="left" width="{tam_menu}" 
+									  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','CONTRASTE'));	button_clickHandler(); seleccionado('b_contraste')}" />
+							
+							
+							<s:Button label="Relieve" 	id="b_relieve" icon="@Embed('assets/icons/relieve.png')"	iconPlacement="left" width="{tam_menu}" 
+									  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','RELIEVE'));	button_clickHandler(); seleccionado('b_relieve')}" />
+							
+							<!--<s:Button label="Satélite" 	id="b_satelite" icon="@Embed('assets/icons/cam.png')" iconPlacement="left" width="{tam_menu}" 
+							click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','SATELITE'));button_clickHandler();  seleccionado('b_satelite')}" />
+							-->
+							<s:Button label="Híbrido"	id="b_hibrido" icon="@Embed('assets/icons/gps.png')" iconPlacement="left" width="{tam_menu}" 
+									  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','HIBRIDO'));button_clickHandler(); seleccionado('b_hibrido')}" />
+							
+							<s:Button label="Mapa" 		id="b_normal" icon="@Embed('assets/icons/normal.png')"	iconPlacement="left" width="{tam_menu}" 
+									  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_MAPA','NORMAL'));button_clickHandler(); seleccionado('b_normal')}"
+									  enabled="false" />				
+						</s:BorderContainer>
+					</s:calloutContent>
+				</s:CalloutButton>
+
+				<!--*****************************
+				**  Capas
+				***************************** -->
+				<s:CalloutButton id="b_capas" width="90" height="60" label="Capas"
+								 click="dispatchEvent(new Llamada(Llamada.ACCION,'CAPAS_XML',''))"
+								 fontFamily="Arial" fontSize="12" icon="@Embed('assets/icons/capas.png')"
+								 iconPlacement="top" letterSpacing="1" textShadowColor="0x000000"
+								 verticalPosition="before">
+					<s:calloutContent>
+						<s:BorderContainer>
+							<s:layout>
+								<s:VerticalLayout paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" gap="10"/>
+							</s:layout>
+							
+							
+							
+							<s:Label id="cargando_capas" text="Cagando Capas..." color="white" />
+							<s:Group id="b_capas_cargadas" visible="false" >
+								<s:layout>
+									<s:VerticalLayout paddingTop="-25" gap="10"/>
+								</s:layout>
+								<!--<s:Button id="b_tiempo" label="Tiempo" emphasized="true" 	icon="@Embed('assets/icons/lluvia.png')"	iconPlacement="left" width="{tam_menu}" 
+										  click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_TIEMPO','')); b_tiempo.emphasized = !b_tiempo.emphasized; button_clickHandler(); }"/>-->
+								
+								<!--<s:Button label="Viento"		icon="@Embed('assets/icons/viento.png')"	iconPlacement="left" width="{tam_menu}"	click="button_clickHandler()"/>-->
+								<s:ToggleButton height="50" id="tb_parques" 	label="Parques Bomberos"	icon="@Embed('assets/icons_map/part.png')"	iconPlacement="left" width="{tam_menu}" click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_CAPAS','PARQUES'));button_clickHandler();}"/>
+								<s:ToggleButton height="50" id="tb_hidrantes" 	label="Hidrantes" 			icon="@Embed('assets/icons_map/hidt.png')"	iconPlacement="left" width="{tam_menu}" click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_CAPAS','HIDRANTES'));button_clickHandler(); }"/>
+								<s:ToggleButton height="50" id="tb_garajes" 	label="garajes" 			icon="@Embed('assets/icons_map/gart.png')"	iconPlacement="left" width="{tam_menu}" click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_CAPAS','GARAJES'));button_clickHandler(); }"/>
+								<s:ToggleButton height="50" id="tb_toxicos" 	label="toxicos" 			icon="@Embed('assets/icons_map/toxt.png')"	iconPlacement="left" width="{tam_menu}" click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_CAPAS','TOXICOS'));button_clickHandler(); }"/>
+								<!--<s:ToggleButton id="tb_metro" 	label="Metro (PDI)" 		icon="@Embed('assets/icons/mapa.png')"	iconPlacement="left" width="{tam_menu}" click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_CAPAS','METRO'));button_clickHandler(); }"/>-->
+								<s:ToggleButton height="50" id="tb_metro_img" 	label="Metro (Imagen)" 		icon="@Embed('assets/icons_map/mett.png')"	iconPlacement="left" width="{tam_menu}" click="{dispatchEvent(new Llamada(Llamada.ACCION,'C_CAPAS','METRO_IMG'));button_clickHandler(); }"/>
+								
+							</s:Group>
+							
+						</s:BorderContainer>
+					</s:calloutContent>
+				</s:CalloutButton>
+				
+				<!--*****************************
+				**  Marcas
+				***************************** -->
+				<s:Button id="b_marcas" width="90" height="60" label="Marcas"
+						  click="         if (b_marcas.emphasized==false){ dispatchEvent(new Llamada(Llamada.ACCION,'PANEL_MARCAS',''));         desactivarBotones();         b_marcas.enabled=true;         }         else {(dispatchEvent(new Llamada(Llamada.ACCION,'PANEL_MARCAS','CERRAR')))}         b_marcas.emphasized = !b_marcas.emphasized;             "
+						  fontFamily="Arial" fontSize="12" icon="@Embed('assets/icons/marcas.png')"
+						  iconPlacement="top" letterSpacing="1" textShadowColor="0x000000"/>
+				
+				
+			</s:HGroup>
+			
+			
+			
+			
+			<!--*****************************
+			**  Grupo Botones Herramientas
+			***************************** -->
+			<s:HGroup id="gb_herramientas" x="898" y="655" gap="5">
+				
+				<!--*****************************
+				**  Medir Distancias
+				***************************** -->
+				<s:Button id="b_medir" width="90" height="60" label="Medir" fontFamily="Arial"
+						  fontSize="12" icon="@Embed('assets/icons/solicitar.png')" iconPlacement="top"
+						  letterSpacing="1" textShadowColor="0x000000"
+						  click="dispatchEvent(new Llamada(Llamada.ACCION,'C_MEDIR',''))"/>
+				<!--****************************
+				**  Viento Pantalla Completa
+				******************************** -->
+				<s:Button id="b_viento_bottom"  width="90" height="60" label="Viento"
+						  fontFamily="Arial" fontSize="12" icon="@Embed('assets/icons/viento.png')"
+						  iconPlacement="top" letterSpacing="1" textShadowColor="0x000000"
+						  click="dispatchEvent(new Llamada(Llamada.ACCION,'IMG_VIENTO',''))" />
+				<!--*****************************
+				**  Herramientas
+				***************************** -->
+				<s:CalloutButton id="b_herramientas" width="90" height="60"  label="Herramientas" fontFamily="Arial" fontSize="10" icon="@Embed('assets/icons/herra.png')" iconPlacement="top" letterSpacing="1" textShadowColor="0x000000" verticalPosition="before">
+					<s:calloutContent>
+						<s:BorderContainer>
+							<s:layout>
+								<s:VerticalLayout paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" gap="10"/>
+							</s:layout>
+							
+							<s:ToggleButton height="50" id="b_xml" label="Cargar Situación" icon="@Embed('assets/icons/xml.png')"	iconPlacement="left" width="{tam_menu}" 
+											click="dispatchEvent(new Llamada(Llamada.ACCION,'CARGA_XML',''));button_clickHandler();"/>
+							
+							
+							<s:ToggleButton height="50" id="b_notas" label="Notas" icon="@Embed('assets/icons/notas.png')"	iconPlacement="left" width="{tam_menu}" 
+											click="notas()"/>
+							<s:ToggleButton height="50" id="b_calculadora" label="Calculadora" icon="@Embed('assets/icons/calc.png')"	iconPlacement="left" width="{tam_menu}" 
+											click="calculadora()"/>
+						</s:BorderContainer>
+					</s:calloutContent>
+				</s:CalloutButton>
+				<!--*****************************
+				**  Navegador WEB
+				***************************** -->
+				<s:Button id="b_web" width="90" height="60" label="Web"
+						  click="activarNavegador()" fontFamily="Arial" fontSize="12"
+						  icon="@Embed('assets/icons/normal.png')" iconPlacement="top" letterSpacing="1"
+						  textShadowColor="0x000000"/>
+				
+				
+				
+				
+			</s:HGroup>
+			<!--*****************************
+			**  Documentación
+			***************************** -->
+			<!--<s:Button id="b_documentos" width="90" height="60" label="Documentos" fontFamily="Arial" fontSize="10" icon="@Embed('assets/icons/boxes.png')" iconPlacement="top" letterSpacing="1" textShadowColor="0x000000"  />-->
+			
+			<!--<s:Button id="b_inicio" x="1180" y="5" width="90" height="60" label="Inicio" fontFamily="Arial" fontSize="12" icon="@Embed('assets/icons/inicio.png')" iconPlacement="top" letterSpacing="1" textShadowColor="0x000000"	  />-->
+			
+		</s:Group>
+		
+		
+		
+		
+		
+		<!-- ******************************************************
+		**
+		**  Navegador Web- CONTENEDOR
+		**
+		***********************************************************-->
+		
+		<s:Group id="navegador_web">
+			
+			<componentes:WebView id="webView" visible="false" width="100%" top="22" height="628"
+								 source="http://google.com"/>
+			
+			
+			<s:Group id="b_web_historial"  y="655" visible="false">
+				<s:Image source="assets/img/marcadores_bottom.png"/>		
+				<s:HGroup  gap="10" x="9" y="13">
+					<s:Button icon="@Embed('assets/icons/atras.png')"		
+							  click="webView.historyBack(); nav_forward.enabled=true"/>
+					<s:Button id="nav_forward" enabled="false" icon="@Embed('assets/icons/alante.png')"		
+							  click="webView.historyForward()"/>
+					<s:Button label="Google" icon="@Embed('assets/icons/buscar.png')"		
+							  click="webView.load('http://google.com');"/>
+					<s:Button label="Dirección" icon="@Embed('assets/icons/marcas.png')"		
+							  click="webView.stop();webView.visible=false;grupo_url.visible=true"/>
+					<s:ToggleButton id="tb_marcadores" height="43" label="Marcadores" icon="@Embed('assets/icons/marcadores.png')"
+									click="tbMarcadores();"/>
+				</s:HGroup>
+			</s:Group>
+			
+			
+			<!-- PANEL MARCADORES -->
+			
+			<s:Group id="panel_marcadores" visible="false" y="22" width="245" height="628">
+				<!-- COLOR DEL FONDO DE LA HOJA -->
+				<s:Rect width="245" height="628">
+					<s:fill>
+						<s:LinearGradient rotation="90">
+							<s:GradientEntry color="#999999" />
+							<s:GradientEntry color="#676767" />
+						</s:LinearGradient>
+					</s:fill>
+				</s:Rect>
+				<s:VGroup left="10" top="20" width="245" height="643" gap="10">
+					<s:Label x="13" y="107" color="#FFFFFF" fontWeight="bold" text="Servicios" />
+					
+					<s:List id="marcadores_servicios"
+							width="90%" height="25%" 
+							dataProvider="{datos_marcadores.lastResult.marcadores.servicios.item}"
+							changing="marcadoresServicios(event)"
+							horizontalCenter="0" labelField="nombre" verticalCenter="-226"/>
+					
+					<s:Label x="13" y="107" color="#FFFFFF" fontWeight="bold" text="Documentación" />
+					<s:List id="marcadores_documentacion"
+							width="90%" height="25%" 
+							dataProvider="{datos_marcadores.lastResult.marcadores.documentacion.item}"
+							changing="marcadoresDocumentacion(event)"
+							horizontalCenter="-3" labelField="nombre" verticalCenter="26"/>
+					
+					<s:Label x="13" y="107" color="#FFFFFF" fontWeight="bold" text="Otros" />
+					<s:List id="marcadores_otros"
+							width="90%" height="25%" 
+							dataProvider="{datos_marcadores.lastResult.marcadores.otros.item}"
+							changing="marcadoresOtros(event)"
+							horizontalCenter="-1" labelField="nombre" verticalCenter="198"/>
+					
+					
+				</s:VGroup>	
+				<s:Button y="656" label="Actualizar Marcadores" click="datos_marcadores.send()"
+						  horizontalCenter="0" icon="assets/icons/actualizar.png" visible="false"/>
+			</s:Group>
+			
+			<!--Cuadro de introducción de url-->
+			<s:Group id="grupo_url" top="22" width="100%" height="100%"  depth="20" visible="false">
+				<s:Rect width="100%" height="628" >
+					<s:fill>
+						<s:LinearGradient rotation="90">
+							<s:GradientEntry color="#999999" />
+							<s:GradientEntry color="#676767" />
+						</s:LinearGradient>
+					</s:fill>
+				</s:Rect>
+				<s:Rect width="100%" height="100%" alpha="0.5">
+					<s:fill>
+						<s:SolidColor color="black"/>
+					</s:fill>
+				</s:Rect>	
+				<s:Panel id="panel" y="50" width="60%" horizontalCenter="0"
+						 title="Navegador Web: Introducir URL">
+					
+					<s:VGroup left="10" right="10" top="10" bottom="10">
+						<s:HGroup width="100%">
+							<s:TextArea id="url_area" width="100%" height="40" text="http://"/>
+							<s:Button label="ir" click="irURL()" height="40"/>
+						</s:HGroup>
+						<s:Button label="Cancelar" click="{grupo_url.visible=false; webView.visible=true;}"/>
+					</s:VGroup>
+				</s:Panel>
+			</s:Group>
+			
+			
+			
+		</s:Group>
+		
+	</s:Group>
+	
+	
+	
+	<s:TextArea id="ta_web" visible="false" x="759" y="655" width="419" height="60"
+				color="#FFFFFF" editable="false"
+				text="NOTIFICACIONES sobre los estados de la unidades."/>
+	
+	<!--************************************************************************
+	**  Pantalla medir
+	*************************************************************************-->	
+	<s:TextArea id="info_medir" x="993" y="655" width="281" height="60" color="#FFFFFF" editable="false" visible="false"
+				text="Info: Pulsar sobre el mapa los puntos a medir."/>
+	
+	
+	
+	
+	
+	<!-- ******************************************************
+	**
+	**  Herramientas- CONTENEDORES DE LAS HERRAMIENTAS
+	**
+	***********************************************************-->
+	
+	<!--*****************************
+	**  CALCULADORA - Contenedor
+	***************************** -->
+	<s:Group id="h_calculadora"  top="22" width="100%" height="100%" visible="false">
+		<componentes:calculator/>
+		<s:Button x="734" y="96" width="28" height="28" label="x" click="{b_calculadora.selected=false; calculadora()}"/>
+	</s:Group>
+	
+	<!--*****************************
+	**  NOTAS - Contenedor
+	***************************** -->
+	<s:Group id="h_notas" width="100%" height="100%" top="22"  visible="false">
+		<componentes:notas />
+		<s:Button x="805" y="51"  label="Salir" click="{b_notas.selected=false; notas()}"/>
+	</s:Group>
+	
+	<!--*****************************
+	**  VIENTO (Pantalla completa)
+	***************************** -->
+	<!--<s:Image id="viento_giant" visible="false" x="119" y="128" width="785" height="495" rotation="0"
+			 smooth="true" source="assets/tiempo/viento_giant.png"/>-->
+	
+</s:Group>	

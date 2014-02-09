@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////
+//																
+//	PANEL DE COMFIRMACIÓN- ACEPTAR/ CANCELAR		 													
+//	
+//  Describe el nombre del panel, el texto y devuelve lo que se pincha															
+//	- -															
+//	Jesús García González											
+//	Universidad Carlos III de Madrid								
+//	- -															
+//////////////////////////////////////////////////////////////// -->
+
+
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	
+	<fx:Script>
+		<![CDATA[
+			//variables que controlan el componente
+			[Bindable] public var titulo:String;
+			[Bindable] public var mensaje:String;
+		]]>
+	</fx:Script>
+	
+
+	
+	<s:Panel width="35%" baseline="0" horizontalCenter="0" title="{titulo}"
+			 verticalCenter="0">
+		
+		<s:VGroup left="10" right="10" top="10" bottom="10" gap="20">
+			
+			<s:Label left="10" right="10" top="10" bottom="10" width="100%"	text="{mensaje}" />		
+		<s:HGroup bottom="10" width="100%" gap="15" horizontalAlign="center" horizontalCenter="0"
+				  verticalAlign="top">	
+			<s:Button id="aceptar" label="Aceptar"  click="{dispatchEvent(event)}" />
+			<s:Button label="Cancelar" click="{dispatchEvent(event)}" />
+		</s:HGroup>
+			
+		</s:VGroup>
+	</s:Panel> 
+	<!--
+	
+	<s:Panel id="sol_recursos" width="344" height="148" horizontalCenter="-155" title="Solicitar Recursos"
+			 verticalCenter="-857">
+		
+		<s:Label left="10" right="10" top="10" height="45"
+				 text="¿Desea solicitar el recurso en esa posición del mapa?"/>
+		
+		<s:HGroup bottom="10" gap="15" horizontalCenter="0">
+			<s:Button label="Aceptar" horizontalCenter="-100" verticalCenter="0"/>
+			<s:Button bottom="15" label="Cancelar" horizontalCenter="0"/>
+		</s:HGroup>
+		
+		
+	</s:Panel> 	
+-->
+</s:Group>
