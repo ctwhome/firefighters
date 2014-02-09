@@ -1,6 +1,7 @@
 Decision Suport Systems for Firefighters 
 
 @author: Jesús García González
+<<<<<<< HEAD
 
 @web: www.ctwhome.com
 
