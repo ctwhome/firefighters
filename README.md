@@ -6,7 +6,7 @@
 <p>@language: FLEX - Action Script 3</p>
 
 
-<strong>Direct link to personal code by Jesús --> https://github.com/ctwhome/firefighters-flex/tree/master/src/com/bomberos </strong>
+<strong>Direct link to the app code --> https://github.com/ctwhome/firefighters-flex/tree/master/src/com/bomberos </strong>
 
 <h3>DESCRIPTION</h3>
 
